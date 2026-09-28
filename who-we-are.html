@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who We Are - Aggregate Construction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body, html {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #ffffff;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            position: relative; /* Context for absolute utility header */
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 35vw 1fr; 
+            min-height: 100vh;
+        }
+
+        .panel-left {
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start; /* Title stays at the top */
+            padding: 100px 80px; 
+        }
+        .page-title {
+            font-size: 38px;
+            font-weight: 600;
+            color: #707070;
+            letter-spacing: -0.03em;
+        }
+
+        /* Shifted Leadership Anchor */
+        .section-anchor {
+            font-size: 38px;
+            font-weight: 200; 
+            color: #b5b5b5; /* Will inherit white via CSS override when moved to the dark panel */
+            letter-spacing: -0.03em;
+            margin-top: 40px; /* Space it below the mission statement */
+            grid-column: 1 / -1; /* Spans both columns if in a grid */
+            padding-left: 60px; /* Aligns with the left text column */
+            padding-bottom: 40px;
+        }
+
+        .panel-right {
+            background-color: #484747; 
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding-top: 100px; /* Replaces the space previously taken by the in-flow utility header */
+        }
+
+        /* Extracted Utility Header pinned to the viewport */
+        .utility-header {
+            position: absolute;
+            top: 40px;
+            right: 60px;
+            z-index: 200; 
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            display: block;
+            width: 18px;
+            height: 2px;
+            background-color: #ffffff;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease, background-color 0.4s ease;
+        }
+
+        /* Active Hamburger (Inverts to dark so it's visible on white overlay) */
+        .hamburger.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); background-color: #333; }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); background-color: #333; }
+
+        /* Universal Mobile Menu Overlay Injection */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #f8f9fa; 
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .mobile-menu-overlay.active { opacity: 1; pointer-events: auto; }
+        .mobile-menu-overlay a {
+            text-decoration: none;
+            color: #333;
+            font-size: 32px;
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            margin: 16px 0;
+            transition: transform 0.3s ease, color 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+        .mobile-menu-overlay.active a { transform: translateY(0); opacity: 1; }
+        .mobile-menu-overlay.active a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu-overlay.active a:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-menu-overlay.active a:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-menu-overlay.active a:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-menu-overlay.active a:nth-child(5) { transition-delay: 0.3s; }
+
+        .text-content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            padding: 0 120px 40px 60px;
+            flex-grow: 1;
+        }
+        .text-column-main p {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: 24px;
+            letter-spacing: 0.01em;
+        }
+        .text-column-main p:last-child { margin-bottom: 0; }
+        
+        .vision-mission-block { margin-bottom: 60px; }
+        .vision-mission-block h2 {
+            color: #ffffff;
+            font-size: 32px;
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+        .vision-mission-block p {
+            color: #ffffff;
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.5;
+            letter-spacing: 0.01em;
+        }
+
+        .structural-footer {
+            display: grid;
+            grid-template-columns: 1.3fr 0.9fr 1fr; 
+            height: 280px; 
+        }
+        .block-medium { background-color: #848484; }
+        .block-darkest { background-color: #272727; }
+        .block-lightest { background-color: #c6c6c6; }
+
+        @media (max-width: 1024px) {
+            .layout-grid { grid-template-columns: 1fr; }
+            
+            /* Responsive Hamburger adjustments */
+            .utility-header {
+                position: fixed; /* Fix to top right corner on scroll */
+                top: 20px;
+                right: 20px;
+                padding: 0;
+                /* Invert hamburger color if it's over the white section. 
+                   We achieve this by setting it to grey by default on mobile. */
+            }
+            .hamburger span { background-color: #707070; } 
+            
+            .panel-left { padding: 40px 30px; height: auto; }
+            .panel-right { padding-top: 60px; }
+            .text-content-grid { grid-template-columns: 1fr; padding: 0 30px 40px 30px; gap: 40px; }
+            
+            .section-anchor {
+                padding-left: 30px;
+            }
+            
+            .structural-footer { height: 150px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Extracted Utility Header pinned to Viewport -->
+    <header class="utility-header">
+        <div class="hamburger" id="hamburgerToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+    </header>
+
+    <!-- Wired Universal Mobile Menu Overlay -->
+    <nav class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html">home</a>
+        <a href="who-we-are.html">who we are</a>
+        <a href="what-we-do-GECAP-conference-room.html">what we do</a>
+        <a href="what-we-do-GECAP-conference-room.html">what we've done</a>
+        <a href="#">get in touch</a>
+    </nav>
+
+    <div class="layout-grid">
+        <aside class="panel-left">
+            <h1 class="page-title">Who We Are</h1>
+        </aside>
+
+        <main class="panel-right">
+            <div class="text-content-grid">
+                <div class="text-column-main">
+                    <p>Established and registered in 2016 By Mr. Adolph Kwabla Amevor. Aggregate Construction, a sole proprietorship under business names act 1962 (Act 151).</p>
+                    <p>We are always available with the necessary skills, knowledge and equipment to meet any requirement in the field of general construction, civil construction, electrical and plumbing installations.</p>
+                    <p>Safe working conditions are a very high priority to us not only for our employees, but also for our customers. This not only enables us to deliver a dynamic and professional service to our customers, but also gives the client the assurance that their interest is served by members and staff personally to complete projects on time and to the required quality standards.</p>
+                    <p>Our experience and expertise as building contractors mean we can handle even the largest project with complete confidence, we are also equally adept at handling the smallest project. However, no matter how big or small the project, our customers are rest assured that it will deliver on time, within their budget and to the satisfaction of our clients.</p>
+                </div>
+                <div class="text-column-secondary">
+                    <div class="vision-mission-block">
+                        <h2>Our Vision</h2>
+                        <p>To continue being an effective and efficient General Contractor with dedicated team determined to bring the dreams of our client's to reality.</p>
+                    </div>
+                    <div class="vision-mission-block">
+                        <h2>Our Mission</h2>
+                        <p>We aim to meet the needs and expectation of our clients with our quality services delivered by our dedicated team.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Leadership moved below mission and above footer blocks -->
+            <h2 class="section-anchor">Leadership</h2>
+
+            <footer class="structural-footer">
+                <div class="block-medium"></div>
+                <div class="block-darkest"></div>
+                <div class="block-lightest"></div>
+            </footer>
+        </main>
+    </div>
+
+    <!-- Navigation Script -->
+    <script>
+        const hamburger = document.getElementById('hamburgerToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html>

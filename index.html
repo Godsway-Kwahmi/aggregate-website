@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aggregate Construction</title>
+    <!-- Importing Inter for beautiful, precise font weights -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;400;600&display=swap" rel="stylesheet">
+    <style>
+        /* Base & Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            height: 100%;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* Afro-Swiss Asymmetrical Grid with Profound Negative Space */
+        .container {
+            display: grid;
+            grid-template-columns: minmax(64px, 12vw) 250px 1fr;
+            min-height: 100vh;
+        }
+
+        /* --- Left Sidebar Area --- */
+        .sidebar {
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-top {
+            height: 220px; 
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding-bottom: 12px;
+            padding-right: 0; 
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #888;
+            font-size: 12px;
+            font-weight: 400;
+            letter-spacing: 0.02em;
+            padding: 6px 0;
+            border-top: 1px solid #f0f0f0; 
+            width: 120px;
+            text-align: right;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:first-child { border-top: none; }
+        .nav-links a:hover { color: #333; }
+
+        /* Structural Color Blocks */
+        .block-light {
+            background-color: #e4e5e6;
+            width: 100%;
+            height: 200px;
+        }
+        
+        .block-dark {
+            background-color: #3a3a3a;
+            height: 90px;
+        }
+
+        /* --- Main Content Area --- */
+        .main-content {
+            grid-column: 3;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            height: 220px;
+            display: flex;
+            justify-content: flex-end;
+            padding-top: 40px;
+            padding-right: 40px;
+        }
+
+        /* Search & Menu Utility */
+        .utility-bar {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            position: relative;
+            z-index: 200; 
+        }
+
+        .search-box {
+            background-color: #6a6a6a;
+            width: 200px;
+            padding: 4px 10px;
+        }
+
+        .search-box input {
+            background: transparent;
+            border: none;
+            color: #ffffff;
+            font-family: inherit;
+            font-size: 11px;
+            width: 100%;
+            outline: none;
+        }
+
+        .search-box input::placeholder { color: #cccccc; }
+
+        .search-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        .hamburger {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-top: 6px;
+            cursor: pointer;
+            margin-left: 10px;
+            z-index: 200;
+        }
+
+        /* Smooth micro-interactions for the hamburger */
+        .hamburger span {
+            display: block;
+            width: 16px;
+            height: 2px;
+            background-color: #333;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+        }
+
+        /* Active Hamburger State */
+        .hamburger.active span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
+
+        /* The Slate Blue Banner */
+        .banner {
+            background-color: #5b7a95;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            padding-left: 40px;
+        }
+
+        .banner-text {
+            font-size: 52px;
+            color: #ffffff;
+            letter-spacing: -0.03em;
+            display: flex;
+            gap: 12px;
+            line-height: 1;
+        }
+
+        .banner-text .bold { font-weight: 600; }
+        .banner-text .light { font-weight: 200; }
+
+        /* Hero Image */
+        .hero-image {
+            flex-grow: 1;
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=2070&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            min-height: 500px;
+        }
+
+        /* Mobile Overlay Menu */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #f8f9fa; 
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .mobile-menu-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .mobile-menu-overlay a {
+            text-decoration: none;
+            color: #333;
+            font-size: 32px;
+            font-weight: 200;
+            letter-spacing: -0.02em;
+            margin: 16px 0;
+            transition: transform 0.3s ease, color 0.3s ease;
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        .mobile-menu-overlay.active a {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu-overlay.active a:nth-child(1) { transition-delay: 0.1s; }
+        .mobile-menu-overlay.active a:nth-child(2) { transition-delay: 0.15s; }
+        .mobile-menu-overlay.active a:nth-child(3) { transition-delay: 0.2s; }
+        .mobile-menu-overlay.active a:nth-child(4) { transition-delay: 0.25s; }
+        .mobile-menu-overlay.active a:nth-child(5) { transition-delay: 0.3s; }
+
+        /* Responsive Breakpoint */
+        @media (max-width: 900px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+            .sidebar { display: none; }
+            .main-content { grid-column: 1; }
+            .header {
+                height: 120px; 
+                padding: 20px;
+                justify-content: flex-end;
+            }
+            .search-box { width: 140px; }
+            .banner {
+                height: auto;
+                padding: 40px 20px;
+            }
+            .banner-text {
+                flex-direction: column;
+                gap: 8px; 
+                font-size: 46px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Wired Universal Mobile Menu Overlay -->
+    <nav class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html">home</a>
+        <a href="who-we-are.html">who we are</a>
+        <a href="what-we-do-GECAP-conference-room.html">what we do</a>
+        <a href="what-we-do-GECAP-conference-room.html">what we've done</a>
+        <a href="#">get in touch</a>
+    </nav>
+
+    <div class="container">
+        <!-- Left Structural Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-top">
+                <nav class="nav-links">
+                    <a href="index.html">home</a>
+                    <a href="who-we-are.html">who we are</a>
+                    <a href="what-we-do-GECAP-conference-room.html">what we do</a>
+                    <a href="what-we-do-GECAP-conference-room.html">what we've done</a>
+                    <a href="#">get in touch</a>
+                </nav>
+            </div>
+            <!-- Grounding Blocks -->
+            <div class="block-light"></div>
+            <div class="block-dark"></div>
+        </aside>
+
+        <!-- Right Core Content -->
+        <main class="main-content">
+            <header class="header">
+                <div class="utility-bar">
+                    <div class="search-box">
+                        <input type="text" placeholder="search term here">
+                    </div>
+                    <span class="search-label">search</span>
+                    <div class="hamburger" id="hamburgerToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            </header>
+
+            <section class="banner">
+                <h1 class="banner-text">
+                    <span class="bold">aggregate</span> 
+                    <span class="light">construction</span>
+                </h1>
+            </section>
+
+            <section class="hero-image"></section>
+        </main>
+    </div>
+
+    <!-- Navigation Script -->
+    <script>
+        const hamburger = document.getElementById('hamburgerToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        hamburger.addEventListener('click', () => {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+            
+            if (mobileMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+</body>
+</html>
