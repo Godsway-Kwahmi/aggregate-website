@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get in Touch - Aggregate Construction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/site.css">
+    <style>
+        .contact-form label { display: block; font-size: 12px; font-weight: 300; color: #b5b5b5; margin-bottom: 4px; }
+        .contact-form input, .contact-form textarea {
+            width: 100%; background: transparent; border: 0; border-bottom: 1px solid #848484; border-radius: 0;
+            color: #fff; font: 300 14px/1.5 'Inter', sans-serif; padding: 8px 0; margin-bottom: 28px; outline: none;
+            transition: border-color .3s ease;
+        }
+        .contact-form textarea { resize: vertical; min-height: 110px; }
+        .contact-form input:focus, .contact-form textarea:focus { border-bottom-color: #fff; }
+        .contact-form button {
+            background: #5b7a95; color: #fff; border: 0; padding: 12px 28px; font: 400 13px 'Inter', sans-serif; cursor: pointer;
+            transition: opacity .3s ease;
+        }
+        .contact-form button:hover { opacity: .85; }
+        .contact-form button:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+        .info-block h2 { font-size: 26px; margin-bottom: 8px; }
+        .info-block a { color: #fff; }
+    </style>
+</head>
+<body>
+    <header class="utility-header">
+        <button class="hamburger" id="hamburgerToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </header>
+
+    <nav class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html">home</a>
+        <a href="who-we-are.html">who we are</a>
+        <a href="what-we-do.html">what we do</a>
+        <a href="what-weve-done.html">what we've done</a>
+        <a href="get-in-touch.html">get in touch</a>
+    </nav>
+
+    <div class="layout-grid">
+        <aside class="panel-left">
+            <h1 class="page-title">Get in Touch</h1>
+            <p class="page-sub">Tell us about your project</p>
+        </aside>
+
+        <main class="panel-right">
+            <div class="text-content-grid">
+                <div>
+                    <!-- TODO: replace the three details below with your real contact details -->
+                    <div class="info-block">
+                        <h2>Email</h2>
+                        <p><a href="mailto:your-email@example.com">your-email@example.com</a></p>
+                    </div>
+                    <div class="info-block">
+                        <h2>Phone</h2>
+                        <p>+233 00 000 0000</p>
+                    </div>
+                    <div class="info-block">
+                        <h2>Office</h2>
+                        <p>Your office address</p>
+                    </div>
+                </div>
+
+                <form class="contact-form" id="contactForm">
+                    <label for="name">Name</label>
+                    <input id="name" name="name" type="text" required autocomplete="name">
+                    <label for="email">Email</label>
+                    <input id="email" name="email" type="email" required autocomplete="email">
+                    <label for="message">Project details</label>
+                    <textarea id="message" name="message" required></textarea>
+                    <button type="submit">Send message</button>
+                </form>
+            </div>
+
+            <footer class="structural-footer">
+                <a class="block-medium" href="what-weve-done.html">What we've done</a>
+                <div class="block-darkest"></div>
+                <a class="block-lightest" href="index.html">Home</a>
+            </footer>
+        </main>
+    </div>
+
+    <script src="assets/js/site.js"></script>
+    <script>
+        // TODO: set this to the address that should receive enquiries.
+        // The form opens the visitor's email app with the message filled in (no server needed).
+        var SEND_TO = 'your-email@example.com';
+
+        document.getElementById('contactForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var f = e.target;
+            var subject = 'Project enquiry from ' + f.name.value;
+            var body = f.message.value + '\n\n' + f.name.value + '\n' + f.email.value;
+            location.href = 'mailto:' + SEND_TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
+        });
+    </script>
+</body>
+</html>

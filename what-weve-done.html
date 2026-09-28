@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What We've Done - Aggregate Construction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/site.css">
+    <style>
+        .projects {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 40px;
+            align-content: start;
+            padding: 0 120px 60px 60px;
+            flex-grow: 1;
+        }
+        .card { display: block; text-decoration: none; color: #fff; }
+        .card .img {
+            aspect-ratio: 4 / 3;
+            background: #c0c0c0 url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?q=80&w=1200&auto=format&fit=crop') center / cover;
+            margin-bottom: 16px;
+            transition: opacity .3s ease;
+        }
+        .card:hover .img { opacity: .85; }
+        .card:focus-visible { outline: 2px solid #fff; outline-offset: 6px; }
+        .card h2 { font-size: 20px; font-weight: 600; letter-spacing: -.02em; }
+        .card p { font-size: 13px; font-weight: 300; color: #b5b5b5; margin-top: 4px; }
+        @media (max-width: 1024px) { .projects { padding: 0 30px 50px; } }
+    </style>
+</head>
+<body>
+    <header class="utility-header">
+        <button class="hamburger" id="hamburgerToggle" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+    </header>
+
+    <nav class="mobile-menu-overlay" id="mobileMenu">
+        <a href="index.html">home</a>
+        <a href="who-we-are.html">who we are</a>
+        <a href="what-we-do.html">what we do</a>
+        <a href="what-weve-done.html">what we've done</a>
+        <a href="get-in-touch.html">get in touch</a>
+    </nav>
+
+    <div class="layout-grid">
+        <aside class="panel-left">
+            <h1 class="page-title">What We've Done</h1>
+            <p class="page-sub">Selected projects</p>
+        </aside>
+
+        <main class="panel-right">
+            <!-- To add a project: copy one <a class="card"> block, change the link, title, place/date and image -->
+            <div class="projects">
+                <a class="card" href="what-we-do-GECAP-conference-room.html">
+                    <div class="img"></div>
+                    <h2>GECAP conference room</h2>
+                    <p>Cantonments, Accra &middot; Construction, August 2024</p>
+                </a>
+            </div>
+
+            <footer class="structural-footer">
+                <a class="block-medium" href="what-we-do.html">What we do</a>
+                <div class="block-darkest"></div>
+                <a class="block-lightest" href="get-in-touch.html">Get in touch</a>
+            </footer>
+        </main>
+    </div>
+
+    <script src="assets/js/site.js"></script>
+</body>
+</html>
