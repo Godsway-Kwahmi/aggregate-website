@@ -186,6 +186,14 @@
             
             .structural-footer { height: 150px; }
         }
+
+        .leaders { display: grid; gap: 28px; padding: 0 120px 60px 60px; }
+        .leader { display: flex; gap: 20px; align-items: flex-start; }
+        .leader img { width: 96px; height: 96px; object-fit: cover; flex-shrink: 0; }
+        .leader h3 { color: #fff; font-size: 16px; font-weight: 600; letter-spacing: -0.01em; }
+        .leader span { display: block; color: #b5b5b5; font-size: 13px; font-weight: 300; margin-top: 2px; }
+        .leader p { color: #fff; font-size: 14px; font-weight: 300; line-height: 1.5; margin-top: 10px; max-width: 520px; }
+        @media (max-width: 1024px) { .leaders { padding: 0 30px 40px; } }
     </style>
 </head>
 <body>
@@ -215,7 +223,7 @@
 
         <main class="panel-right">
             <div class="text-content-grid">
-                <div class="text-column-main">
+                <div class="text-column-main" data-sanity="about-intro">
                     <p>Established and registered in 2016 By Mr. Adolph Kwabla Amevor. Aggregate Construction, a sole proprietorship under business names act 1962 (Act 151).</p>
                     <p>We are always available with the necessary skills, knowledge and equipment to meet any requirement in the field of general construction, civil construction, electrical and plumbing installations.</p>
                     <p>Safe working conditions are a very high priority to us not only for our employees, but also for our customers. This not only enables us to deliver a dynamic and professional service to our customers, but also gives the client the assurance that their interest is served by members and staff personally to complete projects on time and to the required quality standards.</p>
@@ -224,17 +232,18 @@
                 <div class="text-column-secondary">
                     <div class="vision-mission-block">
                         <h2>Our Vision</h2>
-                        <p>To continue being an effective and efficient General Contractor with dedicated team determined to bring the dreams of our client's to reality.</p>
+                        <p data-sanity="about-vision">To continue being an effective and efficient General Contractor with dedicated team determined to bring the dreams of our client's to reality.</p>
                     </div>
                     <div class="vision-mission-block">
                         <h2>Our Mission</h2>
-                        <p>We aim to meet the needs and expectation of our clients with our quality services delivered by our dedicated team.</p>
+                        <p data-sanity="about-mission">We aim to meet the needs and expectation of our clients with our quality services delivered by our dedicated team.</p>
                     </div>
                 </div>
             </div>
             
             <!-- Leadership moved below mission and above footer blocks -->
             <h2 class="section-anchor">Leadership</h2>
+            <div class="leaders" data-sanity="leaders"></div>
 
             <footer class="structural-footer">
                 <div class="block-medium"></div>
@@ -260,5 +269,6 @@
             }
         });
     </script>
+    <script src="assets/sanity/sanity.js" defer></script>
 </body>
 </html>

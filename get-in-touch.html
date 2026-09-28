@@ -47,18 +47,18 @@
         <main class="panel-right">
             <div class="text-content-grid">
                 <div>
-                    <!-- TODO: replace the three details below with your real contact details -->
+                    <!-- Fallback details, replaced by Site settings in Sanity Studio -->
                     <div class="info-block">
                         <h2>Email</h2>
-                        <p><a href="mailto:your-email@example.com">your-email@example.com</a></p>
+                        <p data-sanity="email"><a href="mailto:your-email@example.com">your-email@example.com</a></p>
                     </div>
                     <div class="info-block">
                         <h2>Phone</h2>
-                        <p>+233 00 000 0000</p>
+                        <p data-sanity="phone">+233 00 000 0000</p>
                     </div>
                     <div class="info-block">
                         <h2>Office</h2>
-                        <p>Your office address</p>
+                        <p data-sanity="address">Your office address</p>
                     </div>
                 </div>
 
@@ -83,7 +83,7 @@
 
     <script src="assets/js/site.js"></script>
     <script>
-        // TODO: set this to the address that should receive enquiries.
+        // Fallback recipient. Overwritten by the email in Sanity Studio > Site settings.
         // The form opens the visitor's email app with the message filled in (no server needed).
         var SEND_TO = 'your-email@example.com';
 
@@ -95,5 +95,6 @@
             location.href = 'mailto:' + SEND_TO + '?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body);
         });
     </script>
+    <script src="assets/sanity/sanity.js" defer></script>
 </body>
 </html>
