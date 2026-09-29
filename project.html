@@ -221,6 +221,17 @@
             .project-nav { height: 120px; }
             .nav-prev { padding-left: 30px; }
         }
+
+        /* Image gallery */
+        .pslides { position: absolute; inset: 0; z-index: 0; }
+        .pslide { position: absolute; inset: 0; background-color: #c0c0c0; background-blend-mode: multiply; background-size: cover; background-position: center; opacity: 0; transition: opacity .6s ease; }
+        .pslide.active { opacity: 1; }
+        .spatial-controls { z-index: 2; align-items: center; filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.45)); }
+        .spatial-controls[hidden] { display: none; }
+        .counter { color: #ffffff; font-size: 12px; font-weight: 300; letter-spacing: 0.04em; margin-right: 8px; }
+        .arrow-wrap { display: flex; background: none; border: 0; padding: 6px; cursor: pointer; }
+        .arrow-wrap:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { .pslide { transition: none; } }
     </style>
     <link rel="stylesheet" href="assets/css/theme.css">
     <script src="assets/js/theme.js"></script>
@@ -281,13 +292,18 @@
                 </div>
             </header>
 
-            <div class="spatial-controls">
-                <svg class="arrow-btn" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="14,2 2,12 14,22" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
-                <svg class="arrow-btn" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <polygon points="2,2 14,12 2,22" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
-                </svg>
+            <div class="spatial-controls" hidden>
+                <span class="counter" id="pCount"></span>
+                <button type="button" class="arrow-wrap" id="pPrev" aria-label="Previous image">
+                    <svg class="arrow-btn" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <polygon points="14,2 2,12 14,22" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button type="button" class="arrow-wrap" id="pNext" aria-label="Next image">
+                    <svg class="arrow-btn" viewBox="0 0 16 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <polygon points="2,2 14,12 2,22" stroke="#ffffff" stroke-width="1.5" stroke-linejoin="round"/>
+                    </svg>
+                </button>
             </div>
         </main>
     </div>

@@ -38,10 +38,10 @@
         '"s": *[_type=="siteSettings"]|order(_updatedAt desc)[0]{email,phone,address,"hero":heroImage.asset->url},' +
         '"a": *[_type=="about"]|order(_updatedAt desc)[0]{intro,vision,mission,"leaders":leaders[]{name,role,bio,"photo":photo.asset->url}},' +
         '"services": *[_type=="service"]|order(order asc){title,description},' +
-        '"projects": *[_type=="project"]|order(order asc){title,"slug":slug.current,location,dateLabel,"image":image.asset->url}' +
+        '"projects": *[_type=="project" && defined(slug.current)]|order(order asc){title,"slug":slug.current,location,dateLabel,"image":image.asset->url}' +
         '}';
 
-    var PROJECT_FIELDS = '{title,location,dateLabel,intro,team,"image":image.asset->url}';
+    var PROJECT_FIELDS = '{title,location,dateLabel,intro,team,"image":image.asset->url,"gallery":gallery[defined(asset)].asset->url}';
 
     function renderSite(d) {
         var s = d.s || {}, a = d.a || {};
@@ -133,7 +133,7 @@
         $('#p-date').textContent = p.dateLabel || '';
         $('#p-body').textContent = '';
         fill($('#p-body'), p.intro);
-        if (p.image) $('#p-image').style.backgroundImage = 'url("' + img(p.image, 2000) + '")';
+        renderGallery(p);
         var team = $('#p-team');
         var hasTeam = !!(p.team && p.team.length);
         var teamLabel = document.querySelector('.team-label');
@@ -148,6 +148,48 @@
                 team.appendChild(row);
             });
         }
+    }
+
+    // Project page: main image first, then the gallery, with arrows / keys / swipe to click through
+    function renderGallery(p) {
+        var panel = $('#p-image');
+        var images = [p.image].concat(p.gallery || []).filter(Boolean);
+        if (!panel || !images.length) return; // no images yet: keep the built-in fallback image
+
+        var stage = el('div', 'pslides');
+        var slides = images.map(function (url) {
+            var slide = el('div', 'pslide');
+            slide.style.backgroundImage = 'url("' + img(url, 2000) + '")';
+            stage.appendChild(slide);
+            return slide;
+        });
+        panel.insertBefore(stage, panel.firstChild);
+
+        var controls = $('.spatial-controls'), count = $('#pCount'), current = 0;
+        function show(n) {
+            current = (n + slides.length) % slides.length;
+            slides.forEach(function (slide, i) { slide.classList.toggle('active', i === current); });
+            if (count) count.textContent = (current + 1) + ' / ' + slides.length;
+        }
+        show(0);
+        if (slides.length < 2 || !controls) return; // one image: no arrows
+
+        controls.hidden = false;
+        $('#pPrev').addEventListener('click', function () { show(current - 1); });
+        $('#pNext').addEventListener('click', function () { show(current + 1); });
+        document.addEventListener('keydown', function (e) {
+            if (document.body.style.overflow === 'hidden') return; // menu is open
+            if (e.key === 'ArrowLeft') show(current - 1);
+            else if (e.key === 'ArrowRight') show(current + 1);
+        });
+        var startX = null;
+        panel.addEventListener('touchstart', function (e) { startX = e.touches[0].clientX; }, { passive: true });
+        panel.addEventListener('touchend', function (e) {
+            if (startX === null) return;
+            var dx = e.changedTouches[0].clientX - startX;
+            if (Math.abs(dx) > 40) show(current + (dx < 0 ? 1 : -1));
+            startX = null;
+        });
     }
 
     // Home page hero: randomized slideshow of the most recent project images
