@@ -38,7 +38,7 @@
         '"s": *[_type=="siteSettings"]|order(_updatedAt desc)[0]{email,phone,address,"hero":heroImage.asset->url},' +
         '"a": *[_type=="about"]|order(_updatedAt desc)[0]{intro,vision,mission,"leaders":leaders[]{name,role,bio,"photo":photo.asset->url}},' +
         '"services": *[_type=="service"]|order(order asc){title,description},' +
-        '"projects": *[_type=="project" && defined(slug.current)]|order(order asc){title,"slug":slug.current,location,dateLabel,"image":image.asset->url}' +
+        '"projects": *[_type=="project" && defined(slug)]|order(order asc){title,slug,location,dateLabel,"image":image.asset->url}' +
         '}';
 
     var PROJECT_FIELDS = '{title,location,dateLabel,intro,team,"image":image.asset->url,"gallery":gallery[defined(asset)].asset->url}';
@@ -194,7 +194,7 @@
 
     // Home page hero: randomized slideshow of the most recent project images
     var HERO_LIMIT = 8; // how many of the newest projects (with an image) can appear
-    var HERO_QUERY = '*[_type=="project" && defined(image.asset) && defined(slug.current)]|order(_createdAt desc)[0...' + HERO_LIMIT + ']{title,"slug":slug.current,"image":image.asset->url}';
+    var HERO_QUERY = '*[_type=="project" && defined(image.asset) && defined(slug)]|order(_createdAt desc)[0...' + HERO_LIMIT + ']{title,slug,"image":image.asset->url}';
 
     function shuffle(list) {
         for (var i = list.length - 1; i > 0; i--) {
@@ -274,7 +274,7 @@
     if ($('#p-title')) {
         var slug = new URLSearchParams(location.search).get('slug');
         var groq = slug
-            ? '*[_type=="project" && slug.current==$slug][0]' + PROJECT_FIELDS
+            ? '*[_type=="project" && slug==$slug][0]' + PROJECT_FIELDS
             : '*[_type=="project"]|order(order asc)[0]' + PROJECT_FIELDS;
         query(groq, slug ? { slug: slug } : {}).then(renderProject).catch(fail);
     }
