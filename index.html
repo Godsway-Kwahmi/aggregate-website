@@ -251,13 +251,31 @@
                 font-size: 46px; 
             }
         }
+
+        /* Hero slideshow */
+        .hero-image { position: relative; overflow: hidden; }
+        .slide { position: absolute; inset: 0; display: block; background-size: cover; background-position: center; opacity: 0; transition: opacity .9s ease; pointer-events: none; }
+        .slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+        .slide:focus-visible { outline: 2px solid #ffffff; outline-offset: -6px; }
+        .slide-title { position: absolute; right: 0; bottom: 0; max-width: 80%; background-color: #5b7a95; color: #ffffff; padding: 14px 28px; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+        .slide-dots { position: absolute; left: 40px; bottom: 40px; z-index: 2; display: flex; gap: 8px; filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)); }
+        .slide-dot { position: relative; width: 28px; height: 14px; padding: 0; background: none; border: 0; cursor: pointer; }
+        .slide-dot::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background-color: rgba(255, 255, 255, 0.5); transition: background-color .3s ease; }
+        .slide-dot:hover::after, .slide-dot.active::after { background-color: #ffffff; }
+        .slide-dot:focus-visible { outline: 2px solid #ffffff; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
+        @media (max-width: 900px) {
+            .slide-dots { left: 20px; bottom: 24px; }
+            .slide-title { padding: 12px 20px; font-size: 16px; }
+        }
     </style>
+    <link rel="stylesheet" href="assets/css/theme.css">
+    <script src="assets/js/theme.js"></script>
 </head>
 <body>
 
     <!-- Wired Universal Mobile Menu Overlay -->
     <nav class="mobile-menu-overlay" id="mobileMenu">
-        <a href="index.html">home</a>
         <a href="who-we-are.html">who we are</a>
         <a href="what-we-do.html">what we do</a>
         <a href="what-weve-done.html">what we've done</a>
@@ -269,7 +287,6 @@
         <aside class="sidebar">
             <div class="sidebar-top">
                 <nav class="nav-links">
-                    <a href="index.html">home</a>
                     <a href="who-we-are.html">who we are</a>
                     <a href="what-we-do.html">what we do</a>
                     <a href="what-weve-done.html">what we've done</a>

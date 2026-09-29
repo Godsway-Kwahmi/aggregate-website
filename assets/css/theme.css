@@ -1,0 +1,34 @@
+/* Theme toggle (both modes) */
+.theme-toggle { font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: none; border: 0; cursor: pointer; color: #888; transition: color .3s ease; }
+.theme-toggle:hover { color: #333; }
+.theme-toggle:focus-visible { outline: 2px solid #5b7a95; outline-offset: 4px; }
+.mobile-menu-overlay .theme-toggle { margin-top: 28px; font-size: 14px; font-weight: 400; letter-spacing: .02em; }
+.nav-links .theme-toggle { width: 120px; padding: 6px 0; border-top: 1px solid #f0f0f0; text-align: right; font-size: 12px; font-weight: 400; letter-spacing: .02em; }
+
+/* Dark mode. The dark content panels (#484747) and the slate banner already suit it and are left alone. */
+html[data-theme="dark"] { color-scheme: dark; }
+html[data-theme="dark"], html[data-theme="dark"] body { background-color: #141414; color: #ddd; }
+html[data-theme="dark"] .panel-left { background-color: #141414; }
+
+/* Titles and body text on the (formerly white) panels */
+html[data-theme="dark"] .page-title, html[data-theme="dark"] .project-header h1 { color: #e0e0e0; }
+html[data-theme="dark"] .project-header h2 { color: #a8a8a8; }
+html[data-theme="dark"] .text-block p { color: #b0b0b0; }
+html[data-theme="dark"] .team-members div { color: #cfcfcf; }
+
+/* Structural blocks */
+html[data-theme="dark"] .nav-next { background-color: #3a3a3a; color: #e0e0e0; }
+html[data-theme="dark"] .block-lightest { background-color: #3b3b3b; color: #e0e0e0; }
+html[data-theme="dark"] .block-light { background-color: #262626; }
+
+/* Home sidebar */
+html[data-theme="dark"] .nav-links a, html[data-theme="dark"] .theme-toggle, html[data-theme="dark"] .search-label { color: #9a9a9a; }
+html[data-theme="dark"] .nav-links a, html[data-theme="dark"] .nav-links .theme-toggle { border-top-color: #2a2a2a; }
+html[data-theme="dark"] .nav-links a:hover, html[data-theme="dark"] .theme-toggle:hover { color: #fff; }
+
+/* Menu overlay and hamburger */
+html[data-theme="dark"] .mobile-menu-overlay { background-color: #141414; }
+html[data-theme="dark"] .mobile-menu-overlay a { color: #e6e6e6; }
+html[data-theme="dark"] .mobile-menu-overlay a:hover, html[data-theme="dark"] .mobile-menu-overlay a.current { color: #8fb0cc; }
+html[data-theme="dark"] .hamburger span { background-color: #b0b0b0; }
+html[data-theme="dark"] .hamburger.active span { background-color: #fff; }

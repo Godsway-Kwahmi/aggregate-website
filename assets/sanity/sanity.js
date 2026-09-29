@@ -128,13 +128,18 @@
         }
         document.title = p.title + ' - Aggregate Construction';
         setText($('#p-title'), p.title);
-        setText($('#p-location'), p.location);
-        setText($('#p-date'), p.dateLabel);
+        // Clear the built-in fallback text first so a project never shows another project's details
+        $('#p-location').textContent = p.location || '';
+        $('#p-date').textContent = p.dateLabel || '';
+        $('#p-body').textContent = '';
         fill($('#p-body'), p.intro);
         if (p.image) $('#p-image').style.backgroundImage = 'url("' + img(p.image, 2000) + '")';
         var team = $('#p-team');
-        if (team && p.team && p.team.length) {
-            team.textContent = '';
+        var hasTeam = !!(p.team && p.team.length);
+        var teamLabel = document.querySelector('.team-label');
+        if (teamLabel) teamLabel.hidden = !hasTeam;
+        if (team) team.textContent = '';
+        if (team && hasTeam) {
             p.team.forEach(function (m) {
                 var row = el('div');
                 row.appendChild(el('span', 'bold', m.name));
@@ -145,9 +150,84 @@
         }
     }
 
+    // Home page hero: randomized slideshow of the most recent project images
+    var HERO_LIMIT = 8; // how many of the newest projects (with an image) can appear
+    var HERO_QUERY = '*[_type=="project" && defined(image.asset) && defined(slug.current)]|order(_createdAt desc)[0...' + HERO_LIMIT + ']{title,"slug":slug.current,"image":image.asset->url}';
+
+    function shuffle(list) {
+        for (var i = list.length - 1; i > 0; i--) {
+            var j = Math.floor(Math.random() * (i + 1));
+            var t = list[i]; list[i] = list[j]; list[j] = t;
+        }
+        return list;
+    }
+
+    function renderSlideshow(hero, projects) {
+        if (!projects || !projects.length) return; // no project images yet: keep the static hero image
+        var slides = shuffle(projects.slice());
+        var stage = el('div', 'slides');
+        var dots = el('div', 'slide-dots');
+        var items = [], buttons = [], current = 0, timer = null;
+        var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function show(n) {
+            current = (n + slides.length) % slides.length;
+            items.forEach(function (a, i) {
+                var on = i === current;
+                a.classList.toggle('active', on);
+                a.setAttribute('aria-hidden', on ? 'false' : 'true');
+                a.tabIndex = on ? 0 : -1;
+            });
+            buttons.forEach(function (b, i) {
+                b.classList.toggle('active', i === current);
+                if (i === current) b.setAttribute('aria-current', 'true'); else b.removeAttribute('aria-current');
+            });
+        }
+        function stop() { if (timer) { clearInterval(timer); timer = null; } }
+        function start() {
+            stop();
+            if (still || slides.length < 2) return;
+            timer = setInterval(function () { show(current + 1); }, 6000);
+        }
+
+        slides.forEach(function (p, i) {
+            var a = el('a', 'slide');
+            a.href = 'project.html?slug=' + encodeURIComponent(p.slug);
+            a.style.backgroundImage = 'url("' + img(p.image, 2000) + '")';
+            a.appendChild(el('span', 'slide-title', p.title));
+            stage.appendChild(a);
+            items.push(a);
+            if (slides.length > 1) {
+                var b = el('button', 'slide-dot');
+                b.type = 'button';
+                b.setAttribute('aria-label', 'Show ' + p.title);
+                b.addEventListener('click', function () { show(i); if (timer) start(); });
+                dots.appendChild(b);
+                buttons.push(b);
+            }
+        });
+
+        hero.appendChild(stage);
+        if (buttons.length) hero.appendChild(dots);
+        show(0);
+        start();
+
+        hero.addEventListener('mouseenter', stop);
+        hero.addEventListener('mouseleave', start);
+        hero.addEventListener('focusin', stop);
+        hero.addEventListener('focusout', start);
+        hero.addEventListener('keydown', function (e) {
+            if (e.key === 'ArrowRight') show(current + 1);
+            else if (e.key === 'ArrowLeft') show(current - 1);
+        });
+    }
+
     function fail(err) { console.warn('[sanity]', err); }
 
     query(SITE_QUERY).then(renderSite).catch(fail);
+
+    var heroEl = $('[data-sanity="hero"]');
+    if (heroEl) query(HERO_QUERY).then(function (p) { renderSlideshow(heroEl, p); }).catch(fail);
 
     if ($('#p-title')) {
         var slug = new URLSearchParams(location.search).get('slug');
