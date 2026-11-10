@@ -1,14 +1,13 @@
 /*
  * Dark mode. Load in <head> (before the body) so the saved theme applies before first paint.
- * Uses the visitor's saved choice, otherwise their system setting.
+ * Dark is the default. A visitor's saved choice (via the toggle) overrides it.
  */
 (function () {
     var KEY = 'aggregate-theme';
     var root = document.documentElement;
-    var media = window.matchMedia ? window.matchMedia('(prefers-color-scheme: dark)') : null;
 
     function saved() { try { return localStorage.getItem(KEY); } catch (e) { return null; } }
-    function current() { return saved() || (media && media.matches ? 'dark' : 'light'); }
+    function current() { return saved() || 'dark'; }
 
     function apply(theme) {
         root.setAttribute('data-theme', theme);
@@ -19,10 +18,6 @@
     }
 
     apply(current());
-
-    if (media && media.addEventListener) {
-        media.addEventListener('change', function () { if (!saved()) apply(current()); });
-    }
 
     document.addEventListener('DOMContentLoaded', function () {
         // One toggle in the menu overlay (every page) and one in the home page sidebar

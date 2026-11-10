@@ -32,3 +32,6 @@ html[data-theme="dark"] .mobile-menu-overlay a { color: #e6e6e6; }
 html[data-theme="dark"] .mobile-menu-overlay a:hover, html[data-theme="dark"] .mobile-menu-overlay a.current { color: #8fb0cc; }
 html[data-theme="dark"] .hamburger span { background-color: #b0b0b0; }
 html[data-theme="dark"] .hamburger.active span { background-color: #fff; }
+
+/* Home slideshow backdrop that slides fade through */
+html[data-theme="dark"] .hero-image.has-slides { background-color: #141414; }

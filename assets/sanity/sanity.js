@@ -194,7 +194,7 @@
 
     // Home page hero: randomized slideshow of the most recent project images
     var HERO_LIMIT = 8; // how many of the newest projects (with an image) can appear
-    var HERO_QUERY = '*[_type=="project" && defined(image.asset) && defined(slug)]|order(_createdAt desc)[0...' + HERO_LIMIT + ']{title,slug,"image":image.asset->url}';
+    var HERO_QUERY = '*[_type=="project" && defined(image.asset) && defined(slug)]|order(_createdAt desc)[0...' + HERO_LIMIT + ']{title,slug,location,"image":image.asset->url}';
 
     function shuffle(list) {
         for (var i = list.length - 1; i > 0; i--) {
@@ -205,11 +205,11 @@
     }
 
     function renderSlideshow(hero, projects) {
-        if (!projects || !projects.length) return; // no project images yet: keep the static hero image
+        if (!projects || !projects.length) { hero.classList.remove('has-slides'); return; } // no project images yet: back to the static hero image
         var slides = shuffle(projects.slice());
         var stage = el('div', 'slides');
         var dots = el('div', 'slide-dots');
-        var items = [], buttons = [], current = 0, timer = null;
+        var items = [], buttons = [], current = 0, timer = null, built = false;
         var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         function show(n) {
@@ -236,7 +236,10 @@
             var a = el('a', 'slide');
             a.href = 'project.html?slug=' + encodeURIComponent(p.slug);
             a.style.backgroundImage = 'url("' + img(p.image, 2000) + '")';
-            a.appendChild(el('span', 'slide-title', p.title));
+            var caption = el('span', 'slide-caption');
+            caption.appendChild(el('span', 'slide-title', p.title));
+            if (p.location) caption.appendChild(el('span', 'slide-location', p.location));
+            a.appendChild(caption);
             stage.appendChild(a);
             items.push(a);
             if (slides.length > 1) {
@@ -249,19 +252,33 @@
             }
         });
 
-        hero.appendChild(stage);
-        if (buttons.length) hero.appendChild(dots);
-        show(0);
-        start();
+        function build() {
+            if (built) return;
+            built = true;
+            hero.appendChild(stage);
+            if (buttons.length) hero.appendChild(dots);
+            stage.style.setProperty('--fade-delay', '0s'); // the first slide fades in straight away
+            void stage.offsetWidth;                         // let the browser register the invisible starting state
+            show(0);
+            setTimeout(function () { stage.style.removeProperty('--fade-delay'); }, 100);
+            start();
 
-        hero.addEventListener('mouseenter', stop);
-        hero.addEventListener('mouseleave', start);
-        hero.addEventListener('focusin', stop);
-        hero.addEventListener('focusout', start);
-        hero.addEventListener('keydown', function (e) {
-            if (e.key === 'ArrowRight') show(current + 1);
-            else if (e.key === 'ArrowLeft') show(current - 1);
-        });
+            hero.addEventListener('mouseenter', stop);
+            hero.addEventListener('mouseleave', start);
+            hero.addEventListener('focusin', stop);
+            hero.addEventListener('focusout', start);
+            hero.addEventListener('keydown', function (e) {
+                if (e.key === 'ArrowRight') show(current + 1);
+                else if (e.key === 'ArrowLeft') show(current - 1);
+            });
+        }
+
+        // Wait for the first image so the hero never sits empty, then fade it in. Warm the others in the background.
+        var firstImage = new Image();
+        firstImage.onload = firstImage.onerror = build;
+        firstImage.src = img(slides[0].image, 2000);
+        setTimeout(build, 4000);
+        slides.slice(1).forEach(function (p) { new Image().src = img(p.image, 2000); });
     }
 
     function fail(err) { console.warn('[sanity]', err); }
@@ -269,7 +286,11 @@
     query(SITE_QUERY).then(renderSite).catch(fail);
 
     var heroEl = $('[data-sanity="hero"]');
-    if (heroEl) query(HERO_QUERY).then(function (p) { renderSlideshow(heroEl, p); }).catch(fail);
+    if (heroEl) {
+        query(HERO_QUERY)
+            .then(function (p) { renderSlideshow(heroEl, p); })
+            .catch(function (err) { heroEl.classList.remove('has-slides'); fail(err); });
+    }
 
     if ($('#p-title')) {
         var slug = new URLSearchParams(location.search).get('slug');

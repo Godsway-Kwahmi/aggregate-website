@@ -254,10 +254,17 @@
 
         /* Hero slideshow */
         .hero-image { position: relative; overflow: hidden; }
-        .slide { position: absolute; inset: 0; display: block; background-size: cover; background-position: center; opacity: 0; transition: opacity .9s ease; pointer-events: none; }
-        .slide.active { opacity: 1; pointer-events: auto; z-index: 1; }
+        /* While the slideshow runs, the fallback photo is swapped for a plain backdrop, so slides fade
+           out to it and in from it. The script removes this class again if there are no slides. */
+        .hero-image.has-slides { background-image: none !important; background-color: #ffffff; }
+        .slide { position: absolute; inset: 0; display: block; text-decoration: none; background-size: cover; background-position: center; opacity: 0; pointer-events: none; transition: opacity .7s ease; }
+        /* Fade out, then fade in: the incoming slide waits for the outgoing one to finish */
+        .slide.active { opacity: 1; pointer-events: auto; z-index: 1; transition-delay: var(--fade-delay, .7s); }
         .slide:focus-visible { outline: 2px solid #ffffff; outline-offset: -6px; }
-        .slide-title { position: absolute; right: 0; bottom: 0; max-width: 80%; background-color: #5b7a95; color: #ffffff; padding: 14px 28px; font-size: 18px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+        /* Caption uses the nav-link type: Inter, 400, 12px, .02em. Right-aligned rows split by a hairline, like the links. */
+        .slide-caption { position: absolute; right: 0; bottom: 0; max-width: 80%; min-width: 120px; padding: 6px 24px; display: flex; flex-direction: column; background-color: #5b7a95; color: #ffffff; font-family: inherit; font-size: 12px; font-weight: 400; letter-spacing: 0.02em; text-align: right; }
+        .slide-title, .slide-location { display: block; padding: 6px 0; }
+        .slide-title + .slide-location { border-top: 1px solid rgba(255, 255, 255, 0.3); }
         .slide-dots { position: absolute; left: 40px; bottom: 40px; z-index: 2; display: flex; gap: 8px; filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.4)); }
         .slide-dot { position: relative; width: 28px; height: 14px; padding: 0; background: none; border: 0; cursor: pointer; }
         .slide-dot::after { content: ''; position: absolute; left: 0; right: 0; top: 6px; height: 2px; background-color: rgba(255, 255, 255, 0.5); transition: background-color .3s ease; }
@@ -266,7 +273,7 @@
         @media (prefers-reduced-motion: reduce) { .slide { transition: none; } }
         @media (max-width: 900px) {
             .slide-dots { left: 20px; bottom: 24px; }
-            .slide-title { padding: 12px 20px; font-size: 16px; }
+            .slide-caption { padding: 4px 16px; }
         }
     </style>
     <link rel="stylesheet" href="assets/css/theme.css">
@@ -321,7 +328,7 @@
                 </h1>
             </section>
 
-            <section class="hero-image" data-sanity="hero"></section>
+            <section class="hero-image has-slides" data-sanity="hero"></section>
         </main>
     </div>
 
